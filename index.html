@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Regression & Sigmoid Playground</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Regression & Sigmoid Playground</h1>
+    <div class="main">
+      <canvas id="plot" width="800" height="450"></canvas>
+      <div class="controls">
+        <div class="row">
+          <label>Weight: <span id="wVal">1.00</span></label>
+          <input id="w" type="range" min="-6" max="6" step="0.01" value="1">
+        </div>
+        <div class="row">
+          <label>Bias: <span id="bVal">0.00</span></label>
+          <input id="b" type="range" min="-6" max="6" step="0.01" value="0">
+        </div>
+        <div class="row">
+          <label>Learning Rate: <span id="lrVal">0.05</span></label>
+          <input id="lr" type="range" min="0.001" max="0.5" step="0.001" value="0.05">
+        </div>
+        <div class="row">
+          <label><input id="sigmoid" type="checkbox"> Sigmoid (classification)</label>
+        </div>
+        <div class="row buttons">
+          <button id="rand">Randomize Data</button>
+          <button id="gd">Auto Gradient Descent</button>
+          <button id="stop">Stop</button>
+          <button id="reset">Reset Model</button>
+        </div>
+        <div class="metrics">
+          <div id="loss">Loss: --</div>
+          <div id="acc">Accuracy: --</div>
+        </div>
+        <div class="quiz">
+          <h3>Quick Quiz</h3>
+          <div id="question">Which candidate line best fits the points?</div>
+          <div class="opts">
+            <button class="opt" id="opt0">A</button>
+            <button class="opt" id="opt1">B</button>
+            <button class="opt" id="opt2">C</button>
+          </div>
+          <div class="quiz-buttons">
+            <button id="newQuiz">New Quiz</button>
+            <button id="reveal">Reveal Answer</button>
+          </div>
+          <div id="explain" class="explain"></div>
+        </div>
+      </div>
+    </div>
+    <p class="hint">Use sliders to change the line (or sigmoid) and observe Loss and Accuracy. Open with Live Server.</p>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
