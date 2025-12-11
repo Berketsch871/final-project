@@ -45,17 +45,21 @@ function draw(){
   for(const p of data){
     const cx = toCanvasX(p.x), cy = toCanvasY(p.y);
     if(sigmoidCB.checked){
-      ctx.fillStyle = p.label? 'rgba(220,60,60,0.9)' : 'rgba(60,120,220,0.9)';
+      ctx.fillStyle = p.label? '#ff00ff' : '#00ffff';
     } else {
-      ctx.fillStyle = 'rgba(40,40,40,0.9)';
+      ctx.fillStyle = '#7fffd4';
     }
+    // glow effect
+    ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 12;
     ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2); ctx.fill();
+    // outer ring
+    ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 1.5; ctx.shadowBlur = 0; ctx.beginPath(); ctx.arc(cx,cy,7,0,Math.PI*2); ctx.stroke();
   }
 
   // line
   const x1 = -3, x2 = 3;
   const y1 = model(x1), y2 = model(x2);
-  ctx.strokeStyle = '#222'; ctx.lineWidth=2; ctx.beginPath();
+  ctx.strokeStyle = '#7fffd4'; ctx.lineWidth=2; ctx.beginPath();
   ctx.moveTo(toCanvasX(x1), toCanvasY(y1)); ctx.lineTo(toCanvasX(x2), toCanvasY(y2)); ctx.stroke();
 
   // draw quiz candidate lines (faint)
@@ -70,7 +74,7 @@ function draw(){
 
   // sigmoid curve overlay if checked
   if(sigmoidCB.checked){
-    ctx.beginPath(); ctx.lineWidth=2; ctx.strokeStyle='rgba(0,0,0,0.8)';
+    ctx.beginPath(); ctx.lineWidth=2; ctx.strokeStyle='#7fffd4';
     for(let i=0;i<=200;i++){
       const sx = -3 + (i/200)*6; const p = sigmoid(model(sx));
       const cx = toCanvasX(sx), cy = toCanvasY((p*12)-6);
@@ -118,10 +122,14 @@ function gdStep(){
     for(const p of data){ const pred = model(p.x); const err = pred - p.y; dw += err * p.x; db += err; }
     dw = (2/N)*dw; db = (2/N)*db;
   }
+  // Clip gradients to prevent explosion
+  const maxGrad = 10;
+  dw = Math.max(Math.min(dw, maxGrad), -maxGrad);
+  db = Math.max(Math.min(db, maxGrad), -maxGrad);
   w -= lr * dw; b -= lr * db;
 }
 
-function startAutoGD(){ if(anim) return; let steps=0; function step(){ gdStep(); draw(); steps++; if(steps<10000 && anim) anim = requestAnimationFrame(step); else anim = null; } anim = requestAnimationFrame(step); }
+function startAutoGD(){ if(anim) return; let steps=0; function step(){ gdStep(); const m = computeMetrics(); if(isNaN(m.loss) || m.loss > 1e6){ stopAutoGD(); return; } draw(); steps++; if(steps<10000 && anim) anim = requestAnimationFrame(step); else anim = null; } anim = requestAnimationFrame(step); }
 function stopAutoGD(){ if(anim){ cancelAnimationFrame(anim); anim=null; } }
 
 // events
